@@ -19,7 +19,7 @@ rm -rf node_exporter-1.0.1.linux-amd64.tar.gz node_exporter-1.0.1.linux-amd64
 
 # setup the node-exporter dependencies
 sudo apt install git
-sudo git clone -b installations https://github.com/cvamsikrishna11/devops-fully-automated.git /tmp/devops-fully-automated
+sudo git clone -b configurations https://github.com/paradination/Devops_Fully_Automated_Project.git /tmp/devops-fully
 sudo cp /tmp/devops-fully-automated/prometheus-setup-dependencies/node-exporter.service /etc/systemd/system/node-exporter.service
 
 sudo systemctl daemon-reload
@@ -43,7 +43,7 @@ sudo cp prometheus-2.23.0.linux-amd64/promtool /usr/local/bin/
 
 rm -rf prometheus-2.23.0.linux-amd64.tar.gz prometheus-2.19.0.linux-amd64
 # setting up the dependencies from the repo setup
-sudo git clone -b installations https://github.com/cvamsikrishna11/devops-fully-automated.git /tmp/devops-fully-automated
+sudo git clone -b configurations  https://github.com/paradination/Devops_Fully_Automated_Project.git /tmp/devops-fully-automated
 sudo cp /tmp/devops-fully-automated/prometheus-setup-dependencies/prometheus.yml /etc/prometheus/
 sudo cp /tmp/devops-fully-automated/prometheus-setup-dependencies/prometheus.service /etc/systemd/system/prometheus.service
 
