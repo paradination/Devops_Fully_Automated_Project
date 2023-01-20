@@ -1,26 +1,27 @@
 def COLOR_MAP = [
     'SUCCESS': 'good',
     'FAILURE': 'danger',
-]
+    ]
 
 pipeline {
     agent any
 
-    environment {
-        WORKSPACE = "${env.WORKSPACE}"
-    }
-
     tools {
-        maven 'localMaven'
+        maven 'LocalMaven'
         jdk 'localJdk'
     }
 
-    stages {
-        stage('Git checkout') {
-            steps {
-                echo 'Cloning the application code...'
-                git branch: 'main', url: 'https://github.com/cvamsikrishna11/devops-fully-automated.git'
+    environment {
+        greetings = 'welcome to this project'
+        WORKSPACE = "${env.WORKSPACE}"
+    }
 
+    stages {
+        stage('git checkout') {
+            steps {
+                echo 'getting git repo'
+                git branch: 'main', url: 'https://github.com/paradination/Devops-Projects'
+                echo "$greetings paradin"
             }
         }
 
@@ -43,15 +44,18 @@ pipeline {
                 sh 'mvn test'
             }
         }
+
         stage('Integration Test') {
             steps {
                 sh 'mvn verify -DskipUnitTests'
             }
         }
+
         stage('Checkstyle Code Analysis') {
             steps {
                 sh 'mvn checkstyle:checkstyle'
             }
+
             post {
                 success {
                     echo 'Generated Analysis Result'
@@ -65,8 +69,8 @@ pipeline {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                         sh """
                     mvn sonar:sonar \
-                    -Dsonar.projectKey=maven \
-                    -Dsonar.host.url=http://172.31.3.89:9000 \
+                    -Dsonar.projectKey=Maven-Project \
+                    -Dsonar.host.url=http://localhost:9000 \
                     -Dsonar.login=$SONAR_TOKEN
                     """
                     }
@@ -75,21 +79,29 @@ pipeline {
         }
 
         stage('Quality Gate') {
-            steps {
-                waitForQualityGate abortPipeline: true
-            }
+                    steps {
+                        timeout(time: 1, unit: 'HOURS') {
+                            // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                            // true = set pipeline to UNSTABLE, false = don't
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
         }
 
         stage('Upload artifact to Nexus') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USER_NAME')]) {
-                sh "sed -i \"s/.*<username><\\/username>/<username>$USER_NAME<\\/username>/g\" ${WORKSPACE}/nexus-setup/settings.xml"
-                sh "sed -i \"s/.*<password><\\/password>/<password>$PASSWORD<\\/password>/g\" ${WORKSPACE}/nexus-setup/settings.xml"
-                sh 'cp ${WORKSPACE}/nexus-setup/settings.xml /var/lib/jenkins/.m2'
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USER_NAME')]) {
+                        sh "sed -i \"s/.*<username><\\/username>/<username>$USER_NAME<\\/username>/g\" ${WORKSPACE}/nexus-setup/settings.xml"
+                        sh "sed -i \"s/.*<password><\\/password>/<password>$PASSWORD<\\/password>/g\" ${WORKSPACE}/nexus-setup/settings.xml"
+                        sh 'cp ${WORKSPACE}/nexus-setup/settings.xml /var/lib/jenkins/.m2'
+                        }
+                    }
+        }
+
+        stage('Deploy project') {
+                    steps {
                 sh 'mvn clean deploy -DskipTests'
-                }
-               
-            }
+                    }
         }
 
         stage('Deploy to DEV env') {
@@ -134,8 +146,10 @@ pipeline {
 
     post {
         always {
-            echo 'I will always say Hello again!'
-            slackSend channel: '#team-devops', color: COLOR_MAP[currentBuild.currentResult], message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+            echo 'pipeline progress!'
+            slackSend channel: '#ci-cd-projects', color: COLOR_MAP[currentBuild.currentResult],
+            message: "Message is here \n*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}  stage Job ${env.STAGE_NAME} \n More info at: ${env.BUILD_URL} \n hope you are happy with this result \n love from paradin"
         }
     }
 }
+
