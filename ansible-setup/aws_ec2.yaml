@@ -11,7 +11,7 @@ filters:
     - dev
     - stage
     - prod
-    - test
+    
   # Getting the details of running instances only
   instance-state-name: running
 # Grouping the instances based on tags
