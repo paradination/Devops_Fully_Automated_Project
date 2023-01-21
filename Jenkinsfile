@@ -148,7 +148,7 @@ pipeline {
         always {
             echo 'pipeline progress!'
             slackSend channel: '#ci-cd-projects', color: COLOR_MAP[currentBuild.currentResult],
-            message: "Message is here \n*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}  stage Job ${env.STAGE_NAME} \n More info at: ${env.BUILD_URL} \n hope you are happy with this result \n love from paradin"
+            message: "Message is here \n*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}  stage Job ${env.STAGE_NAME} \n More info at: ${env.BUILD_URL} \n hope you are happy with this result \n love from paradin, a religion"
         }
     }
 }
