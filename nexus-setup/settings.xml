@@ -18,7 +18,7 @@
     <mirror>
       <id>nexus</id>
       <name>nexus</name>
-      <url>http://localhost:8081/repository/paradin_maven_project/</url>               <!--Replace the Nexus Private IP in this line-->
+      <url>http://localhost:8082/repository/paradin_maven_project/</url>               <!--Replace the Nexus Private IP in this line-->
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
